@@ -21,6 +21,7 @@ import org.apache.flume.source.jms.JMSMessageConverter;
 import org.apache.flume.source.jms.JMSSourceConfiguration;
 
 import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.ReadContext;
 import net.minidev.json.JSONObject;
 
@@ -117,10 +118,14 @@ public class JsonJMSMessageConverter implements JMSMessageConverter {
             Iterator<String> names = jsonHeaders.keySet().iterator();
             while (names.hasNext()) {
                 String name = names.next();
-                String jsonPath = jsonHeaders.get(name);
-                String value = ctx.read(jsonPath);
-                if (value != null) {
-                    headers.put(name, value);
+                try {
+                    String jsonPath = jsonHeaders.get(name);
+                    String value = ctx.read(jsonPath);
+                    if (value != null) {
+                        headers.put(name, value);
+                    }
+                } catch (PathNotFoundException e) {
+                    throw new FlumeException(e + " json " + json);
                 }
             }
         }
