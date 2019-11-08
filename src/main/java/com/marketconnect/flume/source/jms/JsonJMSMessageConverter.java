@@ -125,26 +125,30 @@ public class JsonJMSMessageConverter implements JMSMessageConverter {
                         headers.put(name, value);
                     }
                 } catch (PathNotFoundException e) {
-                    throw new FlumeException(e + " json " + json);
+                    logger.error(e.toString());
                 }
             }
         }
-        Object result = ctx.read(body);
-        if (result instanceof List) {
-            Iterator it = ((List) result).iterator();
-            while (it.hasNext()) {
-                Event e = new SimpleEvent();
-                e.setHeaders(headers);
-                String jsonStr = JSONObject.toJSONString((Map) it.next());
-                e.setBody(jsonStr.getBytes(charset));
-                events.add(e);
+        try {
+            Object result = ctx.read(body);
+            if (result instanceof List) {
+                Iterator it = ((List) result).iterator();
+                while (it.hasNext()) {
+                    Event e = new SimpleEvent();
+                    e.setHeaders(headers);
+                    String jsonStr = JSONObject.toJSONString((Map) it.next());
+                    e.setBody(jsonStr.getBytes(charset));
+                    events.add(e);
+                }
+            } else if (result instanceof Map) {
+                String jsonStr = JSONObject.toJSONString((Map) result);
+                event.setBody(jsonStr.getBytes(charset));
+                events.add(event);
+            } else {
+                throw new JMSException("Json body path doesnt match anything");
             }
-        } else if (result instanceof Map) {
-            String jsonStr = JSONObject.toJSONString((Map) result);
-            event.setBody(jsonStr.getBytes(charset));
-            events.add(event);
-        } else {
-            throw new JMSException("Json body path doesnt match anything");
+        } catch (PathNotFoundException e) {
+            logger.error(e.toString());
         }
     } else {
         throw new JMSException("Json is null");
