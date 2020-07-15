@@ -14,7 +14,7 @@
     <inceptionYear>2019</inceptionYear>
 
     <properties>
-        <flume.version>1.5.2</flume.version>
+        <flume.version>1.9.0</flume.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <maven.compiler.target>1.6</maven.compiler.target>
@@ -45,7 +45,7 @@
       <dependency>
         <groupId>org.apache.activemq</groupId>
         <artifactId>activemq-all</artifactId>
-        <version>5.13.2</version>
+        <version>5.15.12</version>
       </dependency>
     <dependency>
       <groupId>com.jayway.jsonpath</groupId>
