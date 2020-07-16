@@ -115,11 +115,10 @@ public class JsonJMSMessageConverter implements JMSMessageConverter {
     if (json != null) {
         ReadContext ctx = JsonPath.parse(json);
         if (jsonHeaders.size() > 0) {
-            Iterator<String> names = jsonHeaders.keySet().iterator();
-            while (names.hasNext()) {
-                String name = names.next();
+            for (Map.Entry<String, String> entry : jsonHeaders.entrySet()) {
+                String name = entry.getKey();
                 try {
-                    String jsonPath = jsonHeaders.get(name);
+                    String jsonPath = entry.getValue();
                     String value = ctx.read(jsonPath);
                     if (value != null) {
                         headers.put(name, value);
