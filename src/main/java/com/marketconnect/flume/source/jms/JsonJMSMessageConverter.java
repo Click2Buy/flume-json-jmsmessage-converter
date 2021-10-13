@@ -112,7 +112,7 @@ public class JsonJMSMessageConverter implements JMSMessageConverter {
     }
     List<Event> events = new ArrayList<Event>();
     logger.debug("Json is " + json);
-    if (json != null) {
+    if (json != null && !json.isEmpty()) {
         ReadContext ctx = JsonPath.parse(json);
         if (jsonHeaders.size() > 0) {
             for (Map.Entry<String, String> entry : jsonHeaders.entrySet()) {
@@ -149,8 +149,6 @@ public class JsonJMSMessageConverter implements JMSMessageConverter {
         } catch (PathNotFoundException e) {
             logger.error(e.toString());
         }
-    } else {
-        throw new JMSException("Json is null");
     }
     logger.debug("Sending " + events.size() + " events");
     return events;
